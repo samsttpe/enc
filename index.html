@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Encuesta</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    #pregunta {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    #respuesta {
+      width: 100%;
+      height: 80px;
+      font-size: 1em;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    #boton {
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="pregunta"></div>
+  <textarea id="respuesta" placeholder="Escribe tu respuesta aquí..."></textarea>
+  <br>
+  <button id="boton">Siguiente</button>
+
+  <script>
+    const preguntas = [
+      "¿Cómo te sientes hoy?",
+      "¿Qué opinas del clima?",
+      "¿Qué esperas del futuro cercano?"
+    ];
+
+    let respuestas = [];
+    let indice = 0;
+
+    const preguntaEl = document.getElementById("pregunta");
+    const respuestaEl = document.getElementById("respuesta");
+    const boton = document.getElementById("boton");
+
+    function mostrarPregunta() {
+      if (indice < preguntas.length) {
+        preguntaEl.textContent = preguntas[indice];
+        respuestaEl.value = "";
+      } else {
+        enviarRespuestas();
+      }
+    }
+
+    boton.addEventListener("click", () => {
+      const respuestaActual = respuestaEl.value.trim();
+      if (respuestaActual === "") {
+        alert("Por favor escribe una respuesta antes de continuar.");
+        return;
+      }
+
+      respuestas.push(respuestaActual);
+      indice++;
+      mostrarPregunta();
+    });
+
+    function enviarRespuestas() {
+      preguntaEl.textContent = "Gracias por completar la encuesta.";
+      respuestaEl.style.display = "none";
+      boton.style.display = "none";
+
+      fetch("https://script.google.com/macros/s/AKfycbz5OQZSWCqLBoyDE8_TV8Sbd66GLMSAE4LVaFzxJJKgQ1M344qgCeuaSbEdM3mrQz1N/exec", {
+        method: "POST",
+        body: JSON.stringify({ respuestas }),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => console.log("Respuestas enviadas"))
+      .catch(err => console.error("Error al enviar:", err));
+    }
+
+    // Mostrar la primera pregunta
+    mostrarPregunta();
+  </script>
+
+</body>
+</html>
