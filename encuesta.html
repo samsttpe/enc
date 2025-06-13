@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Encuesta</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    #pregunta { font-size: 1.5em; margin-bottom: 20px; }
+    #boton { padding: 10px 20px; font-size: 1em; }
+  </style>
+</head>
+<body>
+
+  <div id="pregunta"></div>
+  <button id="boton">Siguiente</button>
+
+  <script>
+    const preguntas = [
+      "¿Te sientes satisfecho con tu día hoy?",
+      "¿Qué opinas del clima?",
+      "¿Te gusta la música que suena en la radio?"
+    ];
+
+    let respuestas = [];
+    let indice = 0;
+
+    const preguntaEl = document.getElementById("pregunta");
+    const boton = document.getElementById("boton");
+
+    function mostrarPregunta() {
+      if (indice < preguntas.length) {
+        preguntaEl.textContent = preguntas[indice];
+      } else {
+        enviarRespuestas();
+      }
+    }
+
+    boton.addEventListener("click", () => {
+      if (indice < preguntas.length) {
+        respuestas.push(preguntas[indice]); // Guarda la pregunta como si fuera la "respuesta"
+        indice++;
+        mostrarPregunta();
+      }
+    });
+
+    function enviarRespuestas() {
+      preguntaEl.textContent = "Gracias por completar la encuesta.";
+      boton.style.display = "none";
+
+      fetch("1wZurCP82yQo5obabHkaExubvWuPCXMrCkj7MtZFyAeroT3hRSOcbqtm3", {
+        method: "POST",
+        body: JSON.stringify({ respuestas }),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => console.log("Enviado"))
+      .catch(err => console.error("Error:", err));
+    }
+
+    // Inicial
+    mostrarPregunta();
+  </script>
+
+</body>
+</html>
